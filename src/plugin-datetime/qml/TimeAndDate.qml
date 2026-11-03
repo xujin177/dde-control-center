@@ -115,6 +115,14 @@ DccObject {
             property bool showCustom: false
             property string customAddr
 
+            DccObject {
+                id: confirmDateTime
+                name: "confirm"
+                parentName: "root/system/datetime/dateTimeGroup/dateAndTimeSettings"
+                pageType: DccObject.Item
+                canSearch: false
+            }
+
             page: Item {
                 implicitWidth: dccData.ntpEnabled ? comboBox.implicitWidth : settingsButton.implicitWidth
                 implicitHeight: dccData.ntpEnabled ? comboBox.implicitHeight : settingsButton.implicitHeight
@@ -208,6 +216,8 @@ DccObject {
                         id: loader
                         active: settingsButton.needShowDialog
                         sourceComponent: DateTimeSettingDialog {
+                            confirmVisible: confirmDateTime.visibleToApp
+                            confirmEnabled: confirmDateTime.enabledToApp
                             onClosing: {
                                 settingsButton.needShowDialog = false
                             }
@@ -532,11 +542,20 @@ DccObject {
             weight: 12
             backgroundType: DccObject.Normal
             pageType: DccObject.Editor
+            DccObject {
+                id: addTimezone
+                name: "addTimezone"
+                parentName: "root/system/datetime/timezoneGroup/timezoneList"
+                pageType: DccObject.Item
+                canSearch: false
+            }
             page: RowLayout {
                 spacing: 10
                 Button {
                     id: addButton
                     Accessible.id: "TimeAndDate_Button_3"
+                    visible: addTimezone.visibleToApp
+                    enabled: addTimezone.enabledToApp
                     text: qsTr("Add")
                     implicitHeight: 30
                     implicitWidth: 60
@@ -578,6 +597,8 @@ DccObject {
                                     }
                                 }
                                 onClicked: {
+                                    if (!addTimezone.visibleToApp || !addTimezone.enabledToApp)
+                                        return
                                     let zoneId = model.zoneId
                                     if (!dccData.hasUserTimeZone(zoneId)) {
                                         dccData.addUserTimeZoneById(zoneId)
@@ -594,7 +615,7 @@ DccObject {
                     }
 
                     onClicked: {
-                        if (!timezoneListWindow.isVisible()) {
+                        if (addTimezone.visibleToApp && addTimezone.enabledToApp && !timezoneListWindow.isVisible()) {
                             timezoneListWindow.setPositionByItem(parent)
                             timezoneListWindow.highlightedIndex = 0
                             timezoneListWindow.show()

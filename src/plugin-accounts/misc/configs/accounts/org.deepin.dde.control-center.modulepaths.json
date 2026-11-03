@@ -4,7 +4,13 @@
     "contents": {
         "modulePaths": {
             "value": [
-                "root/accounts"
+                "root/accounts",
+                "root/accounts/accountsBottomButtons/deleteAccount",
+                "root/accounts/accountsacountInfos/accountsacountFullname/editFullname",
+                "root/accounts/userAvatars/addAccount",
+                "root/accounts/otherSettingsHolder/otherAccountSettings/otherAccountSettingsBottomButtons/deleteAccount",
+                "root/accounts/otherSettingsHolder/otherAccountSettings/otherAccountSettingsacountInfos/otherAccountSettingsacountFullname/editFullname",
+                "root/accounts/otherSettingsHolder/otherAccountSettings/userAvatars/addAccount"
             ],
             "flags": [],
             "name": "Module paths",

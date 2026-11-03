@@ -9,7 +9,9 @@
                 "root/system/datetime/dateTimeGroup/ntpSettings",
                 "root/system/datetime/timezoneGroup/timezoneList",
                 "root/system/langAndFormat",
-                "root/system/langAndFormat/timeFormats"
+                "root/system/langAndFormat/timeFormats",
+                "root/system/datetime/dateTimeGroup/dateAndTimeSettings/confirm",
+                "root/system/datetime/timezoneGroup/timezoneList/addTimezone"
             ],
             "flags": [],
             "name": "Module paths",

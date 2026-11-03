@@ -4,7 +4,10 @@
     "contents": {
         "modulePaths": {
             "value": [
-                "root/accounts/accountsloginMethod/authentication"
+                "root/accounts/accountsloginMethod/authentication",
+                "root/accounts/accountsloginMethod/authentication/face",
+                "root/accounts/accountsloginMethod/authentication/fingerprint",
+                "root/accounts/accountsloginMethod/authentication/iris"
             ],
             "flags": [],
             "name": "Module paths",

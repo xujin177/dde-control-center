@@ -308,6 +308,13 @@ DccObject {
             pageType: DccObject.Editor
             displayName: qsTr("Authorization") + ":"
             visible: dccData.systemInfoMode().showAuthorization()
+            DccObject {
+                id: activate
+                name: "activate"
+                parentName: "root/system/systemInfo/nativeInfoGrp/authorization"
+                pageType: DccObject.Item
+                canSearch: false
+            }
             page: RowLayout {
                 spacing: 8
                 Label {
@@ -325,9 +332,11 @@ DccObject {
                     implicitHeight: 30
                     implicitWidth: licenseActionBtnMetrics.width + 2 * (DS.Style.button.hPadding + DS.Style.control.borderWidth)
                     flat: false
-                    visible: dccData.systemInfoMode().showDetail
+                    visible: dccData.systemInfoMode().showDetail && activate.visibleToApp
+                    enabled: activate.enabledToApp
                     onClicked: {
-                        dccData.systemInfoWork().showActivatorDialog()
+                        if (activate.visibleToApp && activate.enabledToApp)
+                            dccData.systemInfoWork().showActivatorDialog()
                     }
                     ToolTip.visible: licenseActionBtn.hovered && licenseActionBtnMetrics.width > licenseActionBtn.availableWidth
                     ToolTip.text: licenseActionBtn.text

@@ -36,6 +36,13 @@ DccObject {
         parentName: "bootMenu"
         weight: 20
         pageType: DccObject.Item
+        DccObject {
+            id: bootWallpaper
+            name: "bootWallpaper"
+            parentName: "root/system/bootMenu/grubSettingList"
+            pageType: DccObject.Item
+            canSearch: false
+        }
         page: Rectangle {
 
             readonly property int itemDelegateMinWidth: parent.width
@@ -52,9 +59,11 @@ DccObject {
             DropArea {
                 anchors.fill: parent
                 keys: ["text/uri-list"]
-                enabled: dccData.mode().bootWallpaperEnabled
+                enabled: dccData.mode().bootWallpaperEnabled && bootWallpaper.visibleToApp && bootWallpaper.enabledToApp
 
                 onDropped: (drop) => {
+                    if (!enabled)
+                        return
                     if (drop.hasUrls) {
                         let filePath = drop.urls[0].toString()
                         if (filePath.endsWith(".png") || filePath.endsWith(".jpg") || filePath.endsWith(".jpeg") || filePath.endsWith(".bmp")) {
@@ -148,7 +157,9 @@ DccObject {
                     bottomPadding: 5
                     leftPadding: 10
                     elide: Text.ElideRight
-                    text: qsTr("You can click the menu to change the default startup items, or drag the image to the window to change the background image.")
+                    text: bootWallpaper.visibleToApp && bootWallpaper.enabledToApp && dccData.mode().bootWallpaperEnabled
+                          ? qsTr("You can click the menu to change the default startup items, or drag the image to the window to change the background image.")
+                          : qsTr("You can click the menu to change the default startup items.")
                     font: DTK.fontManager.t8
                     color: "white"
                     opacity: 0.7

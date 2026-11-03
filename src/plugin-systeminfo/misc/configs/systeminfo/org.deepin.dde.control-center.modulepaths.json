@@ -13,7 +13,8 @@
                 "root/system/systemInfo/nativeInfoGrp/processor",
                 "root/system/userExperienceProgram",
                 "root/system/userLicense",
-                "root/system/versionProtocol"
+                "root/system/versionProtocol",
+                "root/system/systemInfo/nativeInfoGrp/authorization/activate"
             ],
             "flags": [],
             "name": "Module paths",

@@ -12,6 +12,7 @@ DccObject {
     id: settings
     property string userId
     property string papaName
+    property string accountPath
     property bool autoLoginChecked: true
     property bool nopasswdLoginChecked: true
     property bool noQuickLoginChecked: true
@@ -43,6 +44,13 @@ DccObject {
         weight: 10
         canSearch: settings.canSearch
         pageType: DccObject.Item
+        DccObject {
+            id: addAccount
+            name: "addAccount"
+            parentName: settings.accountPath + "/userAvatars"
+            pageType: DccObject.Item
+            canSearch: false
+        }
         page: Rectangle {
             id: item
             color: "transparent"
@@ -216,18 +224,22 @@ DccObject {
                 Button {
                     Accessible.id: "AccountSettings_Button"
                     text: qsTr("Add new user")
+                    visible: addAccount.visibleToApp
+                    enabled: addAccount.enabledToApp
                     Layout.alignment: Qt.AlignRight | Qt.AlignHCenter
                     Layout.rightMargin: 10
                     implicitWidth: implicitContentWidth + 20
                     implicitHeight: 30
                     onClicked: {
-                        cadLoader.active = true
+                        if (addAccount.visibleToApp && addAccount.enabledToApp)
+                            cadLoader.active = true
                     }
 
                     Loader {
                         id: cadLoader
                         active: false
                         sourceComponent: CreateAccountDialog {
+                            creationAllowed: addAccount.visibleToApp && addAccount.enabledToApp
                             onClosing: function (close) {
                                 cadLoader.active = false
                             }
@@ -278,12 +290,24 @@ DccObject {
             canSearch: settings.canSearch
             weight: 20
             pageType: DccObject.Editor
+            DccObject {
+                id: editFullname
+                name: "editFullname"
+                parentName: settings.accountPath + "/" + settings.papaName + "acountInfos/" + settings.papaName + "acountFullname"
+                pageType: DccObject.Item
+                canSearch: false
+            }
             page: RowLayout {
                 property string originalFullName: "" // Store original name here
 
                 EditActionLabel {
                     accessibleId: "AccountSettings_FullNameEdit"
                     id: fullNameEdit
+                    readonly property bool canEdit: editFullname.visibleToApp && editFullname.enabledToApp
+                    onCanEditChanged: {
+                        if (!canEdit)
+                            readOnly = true
+                    }
                     property bool rightClickPressed: false
                     property bool contextMenuVisible: false
                     property int savedSelectionStart: -1
@@ -293,7 +317,8 @@ DccObject {
                     text: dccData.fullName(settings.userId)
                     placeholderText: qsTr("Set fullname")
                     horizontalAlignment: TextInput.AlignRight
-                    editBtn.visible: readOnly
+                    editBtn.visible: readOnly && editFullname.visibleToApp
+                    editBtn.enabled: editFullname.enabledToApp
                     
                     onEditingFinished: {
                         if (readOnly)
@@ -439,6 +464,10 @@ DccObject {
                     }
 
                     onReadOnlyChanged: {
+                        if (!canEdit) {
+                            readOnly = true
+                            return
+                        }
                         if (rightClickPressed) {
                             return
                         }
@@ -472,6 +501,8 @@ DccObject {
                     }
 
                     onFinished: function () {
+                        if (!canEdit)
+                            return
                         if (rightClickPressed) {
                             fullNameEdit.readOnly = false
                             return
@@ -710,13 +741,22 @@ DccObject {
         canSearch: settings.canSearch
         weight: 0xFFFF
         pageType: DccObject.Item
+        DccObject {
+            id: deleteAccount
+            name: "deleteAccount"
+            parentName: settings.accountPath + "/" + bottomButtons.name
+            pageType: DccObject.Item
+            canSearch: false
+        }
         page: RowLayout {
             Button {
                 id: deleteBtn
                 Accessible.id: "AccountSettings_Button_2"
                 Layout.alignment: groupSettingsBtn.visible ? Qt.AlignLeft : Qt.AlignRight
                 text: qsTr("Delete current account")
-                enabled: dccData.isDeleteAble(settings.userId)
+                property bool deletable: dccData.isDeleteAble(settings.userId)
+                visible: deleteAccount.visibleToApp
+                enabled: deletable && deleteAccount.enabledToApp
                 implicitWidth: implicitContentWidth + 20
                 implicitHeight: 30
                 contentItem: Text {
@@ -733,7 +773,8 @@ DccObject {
                             cfdLoader.active = false
                         }
                         onRequestDelete: function (deleteHome) {
-                            dccData.removeUser(settings.userId, deleteHome)
+                            if (deleteAccount.visibleToApp && deleteAccount.enabledToApp && dccData.isDeleteAble(settings.userId))
+                                dccData.removeUser(settings.userId, deleteHome)
                         }
                     }
                     onLoaded: function () {
@@ -741,12 +782,13 @@ DccObject {
                     }
                 }
                 onClicked: {
-                    cfdLoader.active = true
+                    if (deleteAccount.visibleToApp && deleteAccount.enabledToApp && deletable)
+                        cfdLoader.active = true
                 }
                 Connections {
                     target: dccData
                     function onOnlineUserListChanged() {
-                        deleteBtn.enabled = dccData.isDeleteAble(settings.userId)
+                        deleteBtn.deletable = dccData.isDeleteAble(settings.userId)
                     }
                 }
             }

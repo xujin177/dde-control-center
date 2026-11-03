@@ -19,6 +19,8 @@ D.DialogWindow {
     icon: "preferences-system"
     modality: Qt.WindowModal
     property date currentDate: new Date()
+    property bool confirmVisible: true
+    property bool confirmEnabled: true
 
     component SpinboxTextInput: TextInput {
         Accessible.id: "DateTimeSettingDialog_TextInput"
@@ -249,9 +251,13 @@ D.DialogWindow {
                 Accessible.id: "DateTimeSettingDialog_Button_2"
                 Layout.fillWidth: true
                 text: qsTr("Confirm")
+                visible: ddialog.confirmVisible
+                enabled: ddialog.confirmEnabled
                 font: D.DTK.fontManager.t6
                 highlighted: true
                 onClicked: {
+                    if (!ddialog.confirmVisible || !ddialog.confirmEnabled)
+                        return
                     let dateTime = currentDate
                     dateTime.setFullYear(spYear.value)
                     dateTime.setMonth(spMonth.value - 1)
